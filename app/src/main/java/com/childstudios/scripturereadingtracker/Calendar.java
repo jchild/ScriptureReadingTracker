@@ -1,17 +1,63 @@
 package com.childstudios.scripturereadingtracker;
 
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.CalendarView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-public class Calendar extends AppCompatActivity {
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
 
+public class Calendar extends ActionBarActivity {
+    HashSet<Date> events = new HashSet<>();
+    CalendarView cv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        cv = ((CalendarView)findViewById(R.id.calendar_view));
+        events.add(new Date());
+        ImageView btnPrev = (ImageView)findViewById(R.id.calendar_prev_button);
+        ImageView btnNext = (ImageView)findViewById(R.id.calendar_next_button);
+
+        cv.updateCalendar(events);
+        // assign event handler
+        cv.setEventHandler(new CalendarView.EventHandler()
+        {
+            @Override
+            public void onDayLongPress(Date date)
+            {
+                // show returned day
+                DateFormat df = SimpleDateFormat.getDateInstance();
+                Toast.makeText(Calendar.this, df.format(date), Toast.LENGTH_SHORT).show();
+                newEvent(date);
+            }
+        });
+
+        // add one month and refresh UI
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cv.addMonth();
+                cv.updateCalendar(events);
+            }
+        });
+
+        // subtract one month and refresh UI
+        btnPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cv.subMonth();
+                cv.updateCalendar(events);
+            }
+        });
+
     }
 
     @Override
@@ -34,5 +80,12 @@ public class Calendar extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void newEvent(Date date){
+
+        events.add(date);
+        cv.updateCalendar(events);
+
     }
 }

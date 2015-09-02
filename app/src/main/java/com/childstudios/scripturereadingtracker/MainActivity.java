@@ -1,7 +1,9 @@
 package com.childstudios.scripturereadingtracker;
 
+
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,11 +31,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initializeCalendar();
 
 
         final ArrayList<String> activities = new ArrayList<>();
 
+        activities.add("Calendar");
         activities.add("stats");
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -81,19 +83,6 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void initializeCalendar(){
-
-        calendar = (CalendarView) findViewById(R.id.cal);
-
-       calendar.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-           @Override
-           public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
-               Toast.makeText(getApplicationContext(), dayOfMonth + "/" + month + "/" + year, Toast.LENGTH_SHORT).show();
-           }
-       });
-
-
-        }
 /*Drawer stuff*/
     private void setupDrawer() {
         toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
@@ -129,12 +118,26 @@ public class MainActivity extends ActionBarActivity {
         toggle.onConfigurationChanged(newConfig);
     }
 
+    @Override
+    public void onBackPressed(){
+        if(this.drawerLayout.isDrawerOpen(GravityCompat.START)){
+            this.drawerLayout.closeDrawer(GravityCompat.START);
+
+        }else {
+            super.onBackPressed();
+        }
+    }
+
     public void menuSelect(String activity){
 
         switch(activity){
             case "stats":
-                Intent i = new Intent(this, Stats.class);
-                startActivity(i);
+                Intent stat = new Intent(this, Stats.class);
+                startActivity(stat);
+                break;
+            case "Calendar":
+                Intent cal = new Intent(this, Calendar.class);
+                startActivity(cal);
                 break;
             default:
                 break;
