@@ -3,20 +3,30 @@ package com.childstudios.scripturereadingtracker;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.CalendarView;
 import android.widget.ListView;
+import android.widget.TextSwitcher;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
+import android.os.Handler;
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -25,14 +35,57 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout drawerLayout;
     private ListView list;
     private ListViewAdapter adapter;
+    private TextSwitcher rssFeed;
 
+    Handler feedHandler = new Handler();
+
+    String textToShow[]={"\"To the proud, the applause of the world rings in their ears; to the humble, the applause of heaven warms their hearts.\" —Ezra Taft Benson",
+            "\"We will not accidentally come to believe in the Savior and His gospel.\" —L. Whitney Clayton",
+            "\"Jesus Christ can help us fix anything that needs fixing in our lives.\" —M. Russell Ballard",
+            "\"Many things are good, many are important, but only a few are essential.\" —D. Todd Christofferson",
+            "\"Obedience is a choice.\" —L. Tom Perry",
+            "\"Only God knows hearts, and so only He can say, in truth, “I know how you feel.”\" —Henry B. Eyring"};
+    int messageCount=textToShow.length;
+    int currentIndex=-1;
+    DatabaseHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        db = new DatabaseHandler(this);
+        rssFeed = (TextSwitcher) findViewById(R.id.rss);
+
+        rssFeed.setFactory(new ViewSwitcher.ViewFactory() {
+            @Override
+            public View makeView() {
+                TextView feed = new TextView(MainActivity.this);
+                feed.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+                feed.setTypeface(null, Typeface.ITALIC);
+                feed.setTextColor(Color.GRAY);
+                return feed;
+            }
+        });
+
+        Animation in = AnimationUtils.loadAnimation(this,android.R.anim.slide_in_left);
+        Animation out = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
+
+        rssFeed.setInAnimation(in);
+        rssFeed.setOutAnimation(out);
 
 
+        Runnable feedRunnable = new Runnable(){
+            @Override
+            public void run() {
+                currentIndex++;
+                if(currentIndex==messageCount)
+                    currentIndex=0;
+                rssFeed.setText(textToShow[currentIndex]);
+                feedHandler.postDelayed(this, 10000);
+            }
+        };
+
+        feedHandler.postDelayed(feedRunnable,0);
         final ArrayList<String> activities = new ArrayList<>();
 
         activities.add("Calendar");
@@ -144,6 +197,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
 
+    }
+
+    public void deleteDB(View view){
+        db.endGame();
     }
 
 }

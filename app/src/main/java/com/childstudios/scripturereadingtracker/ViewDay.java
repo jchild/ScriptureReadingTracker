@@ -4,26 +4,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-import java.util.Date;
-
-public class Stats extends AppCompatActivity {
-
-    private DatabaseHandler db;
+public class ViewDay extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stats);
-        db = new DatabaseHandler(this);
-        getStreak();
+        setContentView(R.layout.activity_view_day);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_stats, menu);
+        getMenuInflater().inflate(R.menu.menu_view_day, menu);
         return true;
     }
 
@@ -40,14 +33,5 @@ public class Stats extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void getStreak(){
-        Date today = new Date();
-        int count = db.getEntryCount();
-
-        TextView streak = (TextView) findViewById(R.id.lrs);
-        streak.setText(String.valueOf(count));
-
     }
 }

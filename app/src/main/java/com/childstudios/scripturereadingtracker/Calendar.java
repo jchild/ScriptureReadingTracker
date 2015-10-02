@@ -10,23 +10,29 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+
 
 public class Calendar extends ActionBarActivity {
-    HashSet<Date> events = new HashSet<>();
+    ArrayList<Event> eventsArray;
     CalendarView cv;
+    DatabaseHandler db;
+    Event event;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
         cv = ((CalendarView)findViewById(R.id.calendar_view));
-        events.add(new Date());
+        db = new DatabaseHandler(this);
+        eventsArray = db.getAllEvents(cv.getCurrentDate());
+
         ImageView btnPrev = (ImageView)findViewById(R.id.calendar_prev_button);
         ImageView btnNext = (ImageView)findViewById(R.id.calendar_next_button);
 
-        cv.updateCalendar(events);
+
+        cv.updateCalendar();
         // assign event handler
         cv.setEventHandler(new CalendarView.EventHandler()
         {
@@ -45,7 +51,7 @@ public class Calendar extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 cv.addMonth();
-                cv.updateCalendar(events);
+                cv.updateCalendar();
             }
         });
 
@@ -54,7 +60,7 @@ public class Calendar extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 cv.subMonth();
-                cv.updateCalendar(events);
+                cv.updateCalendar();
             }
         });
 
@@ -84,8 +90,21 @@ public class Calendar extends ActionBarActivity {
 
     public void newEvent(Date date){
 
-        events.add(date);
-        cv.updateCalendar(events);
+        Event newEvent = new Event();
+        newEvent.setDate(date);
+
+        Toast.makeText(Calendar.this, ""+ date,Toast.LENGTH_LONG).show();
+        eventsArray.add(newEvent);
+        db.addEvent(newEvent);
+        cv.updateCalendar();
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        eventsArray = db.getAllEvents(cv.getCurrentDate());
+        cv.updateCalendar();
 
     }
 }

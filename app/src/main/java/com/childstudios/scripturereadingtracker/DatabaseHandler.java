@@ -6,10 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Jonathan on 26/6/2015.
- *
+ */
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     // All Static variables
@@ -17,9 +18,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "ScriptureTrackerDB";
     private static final String TABLE_CALENDAR = "Calendar";
     private static final String KEY_ID = "c_id";
-    private static final String KEY_DATE = "c_date";
-    private static final String KEY_READ = "c_read";
-    private static final String KEY_TIME = "c_time";
+    private static final String KEY_DAY = "c_day";
+    private static final String KEY_MONTH = "c_month";
+    private static final String KEY_YEAR = "c_year";
+
+    private static final String KEY_BOOKID = "c_bookId";
+    private static final String KEY_CHAPTER = "c_chapter";
+    private static final String KEY_HOUR = "c_hour";
+    private static final String KEY_MIN = "c_min";
 
 
     public DatabaseHandler(Context context) {
@@ -29,7 +35,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_PLAYERS_TABLE = "CREATE TABLE " + TABLE_CALENDAR + " ( " + KEY_ID + " INTEGER PRIMARY KEY, " + KEY_DATE + " DATE, " + KEY_TIME + " TIME, " + KEY_READ + " TEXT " + " )";
+        String CREATE_PLAYERS_TABLE = "CREATE TABLE " + TABLE_CALENDAR + " ( " + KEY_ID + " INTEGER PRIMARY KEY, "
+                + KEY_DAY + " INTEGER, "+ KEY_MONTH + " INTEGER, "+ KEY_YEAR + " INTEGER, " + KEY_HOUR + " INTEGER, "
+                + KEY_MIN + " INTEGER" + " )";
         db.execSQL(CREATE_PLAYERS_TABLE);
     }
 
@@ -51,14 +59,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    void addPlayer(player players) {
+    void addEvent(Event event) {
         SQLiteDatabase db = this.getWritableDatabase();
 
+        int id = getMaxID();
+        id = id +1;
+
+
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, players.getID());
-        values.put(KEY_DATE, players.getName());
-        values.put(KEY_TIME, players.getlvl());
-        values.put(KEY_READ,players.getEquip());
+        values.put(KEY_ID, id);
+        values.put(KEY_DAY, event.getDay());
+        values.put(KEY_MONTH, event.getMonth());
+        values.put(KEY_YEAR, event.getYear());
+        values.put(KEY_HOUR, event.getHour());
+        values.put(KEY_MIN, event.getMin());
 
         // Inserting Row
         db.insert(TABLE_CALENDAR, null, values);
@@ -66,24 +80,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting single contact
-    player getPlayer(int id) {
+    Event getEvent(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_CALENDAR, new String[]{KEY_ID, KEY_DATE, KEY_TIME, KEY_READ}, KEY_ID + "=?",
+        Cursor cursor = db.query(TABLE_CALENDAR, new String[]{KEY_ID, KEY_DAY, KEY_MONTH, KEY_YEAR, KEY_HOUR, KEY_MIN}, KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        player players = new player(Integer.parseInt(cursor.getString(0)),cursor.getString(1),Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)),Boolean.valueOf(cursor.getString(4)),Boolean.valueOf(cursor.getString(5)));
+        Event event = new Event(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor.getString(5)));
         db.close();
-        return players;
+        return event;
     }
 
-    // Getting All Contacts
-    public ArrayList<player> getAllPlayers() {
-        ArrayList<player> playerList = new ArrayList<player>();
+    // Getting All Events
+    public ArrayList<Event> getAllEvents(Date currentMonth) {
+        ArrayList<Event> eventList = new ArrayList<Event>();
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_PLAYER;
+
+        int month = currentMonth.getMonth();
+        int year = currentMonth.getYear();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_CALENDAR;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -91,32 +109,56 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                player players = new player(Integer.parseInt(cursor.getString(0)),cursor.getString(1), Integer.parseInt(cursor.getString(2)), Integer.parseInt(cursor.getString(3)),Boolean.valueOf(cursor.getString(4)),Boolean.valueOf(cursor.getString(5)));
-                playerList.add(players);
+                Event event = new Event(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor.getString(5)));
+                eventList.add(event);
             } while (cursor.moveToNext());
         }
         db.close();
-        return playerList;
+        return eventList;
     }
 
-    public void updatePlayer(player players) {
+    // Getting Events for a given month
+    public ArrayList<Event> getMonthEvents(Date currentMonth) {
+        ArrayList<Event> eventList = new ArrayList<Event>();
+        // Select All Query
+
+        int month = currentMonth.getMonth();
+        int year = currentMonth.getYear();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_CALENDAR + " WHERE " + KEY_MONTH + " = " + month + " AND " + KEY_YEAR + " = " + year;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Event event = new Event(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor.getString(5)));
+                eventList.add(event);
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return eventList;
+    }
+
+    public void updateEvent(Event event) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, players.getName());
-        values.put(KEY_LEVEL, players.getlvl());
-        values.put(KEY_EQUIPMENT, players.getEquip());
-        values.put(KEY_ELF, String.valueOf(players.isElf()));
-        values.put(KEY_WARRIOR, String.valueOf(players.isWarrior()));
+        values.put(KEY_DAY, String.valueOf(event.getDate().getDay()));
+        values.put(KEY_MONTH, String.valueOf(event.getDate().getMonth()));
+        values.put(KEY_YEAR, String.valueOf(event.getDate().getYear()));
+        values.put(KEY_HOUR, String.valueOf(event.getDate().getHours()));
+        values.put(KEY_MIN, String.valueOf(event.getDate().getMinutes()));
 
         // updating row
-        db.update(TABLE_CALENDAR, values, KEY_ID + " = ?", new String[]{String.valueOf(players.getID())});
+        db.update(TABLE_CALENDAR, values, KEY_ID + " = ?", new String[]{String.valueOf(event.getID())});
         db.close();
     }
 
-    public void deletePlayer(player players) {
+    public void deleteEvent(Event event) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_CALENDAR, KEY_ID + " = ?", new String[]{String.valueOf(players.getID())});
+        db.delete(TABLE_CALENDAR, KEY_ID + " = ?", new String[]{String.valueOf(event.getID())});
         db.close();
     }
 
@@ -145,4 +187,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         return id;
     }
-}*/
+}

@@ -24,6 +24,10 @@
             android:name=".Stats"
             android:label="@string/title_activity_stats" >
         </activity>
+        <activity
+            android:name=".ViewDay"
+            android:label="@string/title_activity_view_day" >
+        </activity>
     </application>
 
 </manifest>
