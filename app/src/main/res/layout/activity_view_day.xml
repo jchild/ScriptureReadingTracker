@@ -7,4 +7,62 @@
     tools:context="com.childstudios.scripturereadingtracker.ViewDay">
 
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/DateEdit"
+        android:onClick="pickDate"
+        android:textSize="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:text="DD/MM/YYYY" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:id="@+id/Time"
+        android:layout_below="@+id/DateEdit"
+        android:layout_alignParentStart="true"
+        android:text="HH:MM"
+        android:onClick="pickTime"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scriptureSpinner"
+        android:layout_below="@+id/Time"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bookSpinner"
+        android:layout_below="@+id/scriptureSpinner"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chapterSpinner"
+        android:layout_below="@+id/bookSpinner"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:id="@+id/SubmitEvent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="submitEvent"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/CancelEvent"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/SubmitEvent"
+        android:onClick="cancelEvent"/>
 </RelativeLayout>

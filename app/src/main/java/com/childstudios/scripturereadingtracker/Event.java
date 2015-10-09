@@ -61,6 +61,11 @@ public class Event {
         return time;
     }
 
+    public void setTime(int hour, int min){
+        this.hour = hour;
+        this.min = min;
+    }
+
     public int getHour(){
         return hour;
     }

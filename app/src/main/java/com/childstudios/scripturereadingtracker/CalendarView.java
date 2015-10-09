@@ -151,6 +151,13 @@ public class CalendarView extends LinearLayout {
                 return true;
             }
         });
+        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> view, View cell, int position, long id) {
+                eventHandler.onDayPress((Date) view.getItemAtPosition(position));
+            }
+        });
     }
 
     /**
@@ -242,14 +249,12 @@ public class CalendarView extends LinearLayout {
 
             // if this day has an event, specify event image
             view.setBackgroundResource(0);
-            if (eventDays != null && month == eventDays.get(0).getMonth()){
+            if (eventDays != null && !eventDays.isEmpty() && month == eventDays.get(0).getMonth()){
                 for (Date eventDate : eventDays){
-                    Log.v("Event Array", String.valueOf(eventDate.getMonth()) + "/" + String.valueOf(eventDate.getDate()) + "/" + String.valueOf(eventDate.getYear()) + "/" );
-                    Log.v("Event Array", String.valueOf(month) + "/" + String.valueOf(day) + "/" + String.valueOf(year) + "/" );
-                    Log.v("Event Array","-------------");
                     if (eventDate.getDate() == day && eventDate.getMonth() == month && eventDate.getYear() == year ){
                         // mark this day for event
                         view.setBackgroundResource(R.drawable.ic_star);
+                        eventDays.remove(eventDate);
                         break;
                     }
                 }
@@ -290,6 +295,7 @@ public class CalendarView extends LinearLayout {
      */
     public interface EventHandler {
         void onDayLongPress(Date date);
+        void onDayPress(Date date);
     }
 
     public void addMonth(){

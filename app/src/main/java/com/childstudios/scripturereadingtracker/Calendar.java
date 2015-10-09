@@ -1,13 +1,18 @@
 package com.childstudios.scripturereadingtracker;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +24,8 @@ public class Calendar extends ActionBarActivity {
     CalendarView cv;
     DatabaseHandler db;
     Event event;
+    Date keepDate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +33,7 @@ public class Calendar extends ActionBarActivity {
 
         cv = ((CalendarView)findViewById(R.id.calendar_view));
         db = new DatabaseHandler(this);
-        eventsArray = db.getAllEvents(cv.getCurrentDate());
+        eventsArray = db.getMonthEvents(cv.getCurrentDate());
 
         ImageView btnPrev = (ImageView)findViewById(R.id.calendar_prev_button);
         ImageView btnNext = (ImageView)findViewById(R.id.calendar_next_button);
@@ -39,10 +46,37 @@ public class Calendar extends ActionBarActivity {
             @Override
             public void onDayLongPress(Date date)
             {
+               // DateFormat df = SimpleDateFormat.getDateInstance();
+               // Toast.makeText(Calendar.this, df.format(date), Toast.LENGTH_SHORT).show();
+                //newEvent(date);
                 // show returned day
+            }
+            @Override
+            public void onDayPress(Date date){
                 DateFormat df = SimpleDateFormat.getDateInstance();
-                Toast.makeText(Calendar.this, df.format(date), Toast.LENGTH_SHORT).show();
-                newEvent(date);
+                boolean check = false;
+                Intent i = new Intent(Calendar.this, ViewDay.class);
+                i.putExtra("Date", date);
+                if(eventsArray != null){
+                    for(Event events : eventsArray){
+                        if(events.getDay() == date.getDate() && events.getYear() == date.getYear() && events.getMonth() == date.getMonth()){
+                            events.getMin();
+                            i.putExtra("id", events.getID());
+                            check = true;
+                            break;
+                        }
+
+                    }
+                }
+                else{
+                    Event blank = new Event();
+                    i.putExtra("event", (Parcelable) blank);
+
+                }
+
+                i.putExtra("check", check);
+                startActivity(i);
+                finish();
             }
         });
 
@@ -90,21 +124,50 @@ public class Calendar extends ActionBarActivity {
 
     public void newEvent(Date date){
 
-        Event newEvent = new Event();
-        newEvent.setDate(date);
+        keepDate = date;
+        AlertDialog.Builder newEvent = new AlertDialog.Builder(this);
+        newEvent.setTitle("Add new record");
+        newEvent.setMessage("Please input the following information:");
+        View layout = View.inflate(this,R.layout.dialog_new_event, null);
 
-        Toast.makeText(Calendar.this, ""+ date,Toast.LENGTH_LONG).show();
-        eventsArray.add(newEvent);
-        db.addEvent(newEvent);
+
+
+        newEvent.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Event newEvent = new Event();
+                newEvent.setDate(keepDate);
+                eventsArray.add(newEvent);
+                db.addEvent(newEvent);
+                cv.updateCalendar();
+            }
+        });
+        newEvent.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        newEvent.setView(layout);
+        AlertDialog dialog = newEvent.create();
+        dialog.show();
+
+    }
+
+
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        eventsArray = db.getMonthEvents(cv.getCurrentDate());
         cv.updateCalendar();
 
     }
 
     @Override
-    public void onResume(){
-        super.onResume();
-        eventsArray = db.getAllEvents(cv.getCurrentDate());
-        cv.updateCalendar();
-
+    public void onBackPressed(){
+        Intent i = new Intent(this,MainActivity.class);
+        startActivity(i);
+        finish();
     }
 }

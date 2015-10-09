@@ -94,13 +94,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting All Events
-    public ArrayList<Event> getAllEvents(Date currentMonth) {
+    public ArrayList<Event> getAllEvents() {
         ArrayList<Event> eventList = new ArrayList<Event>();
         // Select All Query
-
-        int month = currentMonth.getMonth();
-        int year = currentMonth.getYear();
-
         String selectQuery = "SELECT  * FROM " + TABLE_CALENDAR;
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -145,11 +141,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_DAY, String.valueOf(event.getDate().getDay()));
-        values.put(KEY_MONTH, String.valueOf(event.getDate().getMonth()));
-        values.put(KEY_YEAR, String.valueOf(event.getDate().getYear()));
-        values.put(KEY_HOUR, String.valueOf(event.getDate().getHours()));
-        values.put(KEY_MIN, String.valueOf(event.getDate().getMinutes()));
+        values.put(KEY_DAY, String.valueOf(event.getDay()));
+        values.put(KEY_MONTH, String.valueOf(event.getMonth()));
+        values.put(KEY_YEAR, String.valueOf(event.getYear()));
+        values.put(KEY_HOUR, String.valueOf(event.getHour()));
+        values.put(KEY_MIN, String.valueOf(event.getMin()));
 
         // updating row
         db.update(TABLE_CALENDAR, values, KEY_ID + " = ?", new String[]{String.valueOf(event.getID())});

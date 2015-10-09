@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/npMin"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/textView6"
+        android:layout_marginLeft="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=":"
+        android:id="@+id/textView6"
+        android:layout_marginTop="73dp"
+        android:textSize="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/npHour"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/textView6"
+        android:layout_marginRight="5dp" />
+</RelativeLayout>-->
+
+<TimePicker xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/myTimePicker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:timePickerMode="spinner">
+
+</TimePicker>

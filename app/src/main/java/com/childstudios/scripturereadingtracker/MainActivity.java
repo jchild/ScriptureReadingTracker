@@ -21,10 +21,11 @@ import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
+import java.util.Random;
+
 import android.os.Handler;
 
 
@@ -44,9 +45,10 @@ public class MainActivity extends ActionBarActivity {
             "\"Jesus Christ can help us fix anything that needs fixing in our lives.\" —M. Russell Ballard",
             "\"Many things are good, many are important, but only a few are essential.\" —D. Todd Christofferson",
             "\"Obedience is a choice.\" —L. Tom Perry",
-            "\"Only God knows hearts, and so only He can say, in truth, “I know how you feel.”\" —Henry B. Eyring"};
+            "\"Only God knows hearts, and so only He can say, in truth, “I know how you feel.”\" —Henry B. Eyring" +
+            "\"His love never fails…Nor will the peace He promises ever leave us as we serve others for Him.\" —Henry B. Eyring"};
     int messageCount=textToShow.length;
-    int currentIndex=-1;
+    int currentIndex;
     DatabaseHandler db;
 
     @Override
@@ -55,6 +57,8 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         db = new DatabaseHandler(this);
         rssFeed = (TextSwitcher) findViewById(R.id.rss);
+        Random r = new Random();
+        currentIndex = r.nextInt(textToShow.length);
 
         rssFeed.setFactory(new ViewSwitcher.ViewFactory() {
             @Override
@@ -85,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
             }
         };
 
-        feedHandler.postDelayed(feedRunnable,0);
+        feedHandler.postDelayed(feedRunnable, 0);
         final ArrayList<String> activities = new ArrayList<>();
 
         activities.add("Calendar");
@@ -187,10 +191,12 @@ public class MainActivity extends ActionBarActivity {
             case "stats":
                 Intent stat = new Intent(this, Stats.class);
                 startActivity(stat);
+                finish();
                 break;
             case "Calendar":
                 Intent cal = new Intent(this, Calendar.class);
                 startActivity(cal);
+                finish();
                 break;
             default:
                 break;
