@@ -22,7 +22,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_MONTH = "c_month";
     private static final String KEY_YEAR = "c_year";
 
-    private static final String KEY_BOOKID = "c_bookId";
+    private static final String KEY_SCRIPTURE = "c_scripture";
+    private static final String KEY_BOOK = "c_book";
     private static final String KEY_CHAPTER = "c_chapter";
     private static final String KEY_HOUR = "c_hour";
     private static final String KEY_MIN = "c_min";
@@ -37,7 +38,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_PLAYERS_TABLE = "CREATE TABLE " + TABLE_CALENDAR + " ( " + KEY_ID + " INTEGER PRIMARY KEY, "
                 + KEY_DAY + " INTEGER, "+ KEY_MONTH + " INTEGER, "+ KEY_YEAR + " INTEGER, " + KEY_HOUR + " INTEGER, "
-                + KEY_MIN + " INTEGER" + " )";
+                + KEY_MIN + " INTEGER, " + KEY_SCRIPTURE + " INTEGER, " + KEY_BOOK + " INTEGER, "+ KEY_CHAPTER +" INTEGER" + " )";
         db.execSQL(CREATE_PLAYERS_TABLE);
     }
 
@@ -73,6 +74,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_YEAR, event.getYear());
         values.put(KEY_HOUR, event.getHour());
         values.put(KEY_MIN, event.getMin());
+        values.put(KEY_SCRIPTURE, event.getScript());
+        values.put(KEY_BOOK, event.getBook());
+        values.put(KEY_CHAPTER, event.getChapt());
 
         // Inserting Row
         db.insert(TABLE_CALENDAR, null, values);
@@ -83,12 +87,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     Event getEvent(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_CALENDAR, new String[]{KEY_ID, KEY_DAY, KEY_MONTH, KEY_YEAR, KEY_HOUR, KEY_MIN}, KEY_ID + "=?",
+        Cursor cursor = db.query(TABLE_CALENDAR, new String[]{KEY_ID, KEY_DAY, KEY_MONTH, KEY_YEAR, KEY_HOUR, KEY_MIN, KEY_SCRIPTURE, KEY_BOOK, KEY_CHAPTER}, KEY_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        Event event = new Event(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor.getString(5)));
+        Event event = new Event(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor.getString(5)), Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor.getString(7)), Integer.parseInt(cursor.getString(8)));
         db.close();
         return event;
     }
@@ -105,7 +109,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Event event = new Event(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor.getString(5)));
+                Event event = new Event(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor.getString(5)), Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor.getString(7)), Integer.parseInt(cursor.getString(8)));
                 eventList.add(event);
             } while (cursor.moveToNext());
         }
@@ -129,7 +133,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                Event event = new Event(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor.getString(5)));
+                Event event = new Event(Integer.parseInt(cursor.getString(0)), Integer.parseInt(cursor.getString(1)),Integer.parseInt(cursor.getString(2)),Integer.parseInt(cursor.getString(3)), Integer.parseInt(cursor.getString(4)), Integer.parseInt(cursor.getString(5)), Integer.parseInt(cursor.getString(6)), Integer.parseInt(cursor.getString(7)), Integer.parseInt(cursor.getString(8)));
                 eventList.add(event);
             } while (cursor.moveToNext());
         }
@@ -146,6 +150,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_YEAR, String.valueOf(event.getYear()));
         values.put(KEY_HOUR, String.valueOf(event.getHour()));
         values.put(KEY_MIN, String.valueOf(event.getMin()));
+        values.put(KEY_SCRIPTURE, event.getScript());
+        values.put(KEY_BOOK, event.getBook());
+        values.put(KEY_CHAPTER, event.getChapt());
 
         // updating row
         db.update(TABLE_CALENDAR, values, KEY_ID + " = ?", new String[]{String.valueOf(event.getID())});

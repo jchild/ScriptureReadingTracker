@@ -16,22 +16,31 @@ public class Event {
     int id;
     int hour;
     int min;
+    int script;
+    int book;
+    int chapt;
 
 
     public Event(){
         id = 0;
         hour = 0;
         min = 0;
+        script = 0;
+        book = 0;
+        chapt = 0;
 
     }
 
-    public Event(int id, int day, int month, int year, int hour, int min){
+    public Event(int id, int day, int month, int year, int hour, int min, int script, int book, int chapt){
         this.id = id;
         this.month = month;
         this.day = day;
         this.year = year;
         this.hour = hour;
         this.min = min;
+        this.script = script;
+        this.book = book;
+        this.chapt = chapt;
     }
 
     public int getID(){
@@ -54,31 +63,25 @@ public class Event {
         year = date.getYear();
     }
 
-    public Time getTime() {
-        Time time = null;
-        time.setHours(hour);
-        time.setMinutes(min);
-        return time;
-    }
 
     public void setTime(int hour, int min){
         this.hour = hour;
         this.min = min;
     }
 
-    public int getHour(){
-        return hour;
-    }
-    public int getMin(){
-        return min;
-    }
-    public int getDay(){
-        return day;
-    }
-    public int getYear(){
-        return year;
-    }
+    public int getHour(){return hour;}
+    public int getMin(){return min;}
+    public int getDay(){return day;}
+    public int getYear(){return year;}
     public int getMonth(){
         return month;
     }
+
+    public void setScript(int script){this.script = script;}
+    public void setBook(int book){this.book = book;}
+    public void setChapt(int chapt){this.chapt = chapt;}
+
+    public int getScript(){return script;}
+    public int getBook(){return book;}
+    public int getChapt(){return chapt;}
 }

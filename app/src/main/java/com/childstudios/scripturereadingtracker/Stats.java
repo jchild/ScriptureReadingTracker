@@ -1,5 +1,6 @@
 package com.childstudios.scripturereadingtracker;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -49,5 +50,11 @@ public class Stats extends AppCompatActivity {
         TextView streak = (TextView) findViewById(R.id.lrs);
         streak.setText(String.valueOf(count));
 
+    }
+    @Override
+    public void onBackPressed(){
+        Intent i = new Intent(this,MainActivity.class);
+        startActivity(i);
+        finish();
     }
 }

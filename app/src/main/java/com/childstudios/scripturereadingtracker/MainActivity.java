@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Parcelable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import android.os.Handler;
@@ -208,5 +210,18 @@ public class MainActivity extends ActionBarActivity {
     public void deleteDB(View view){
         db.endGame();
     }
+
+    public void enterToday(View view){
+        Intent i = new Intent(this, ViewDay.class);
+        Date date = new Date();
+        Boolean check = false;
+
+        i.putExtra("Date", date);
+        i.putExtra("check", check);
+
+        startActivity(i);
+        finish();
+    }
+
 
 }
